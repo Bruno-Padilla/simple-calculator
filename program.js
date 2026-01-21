@@ -73,10 +73,22 @@ numberKeys.addEventListener("click", (e) => {
         }
 
         // Show the operand on the screen and reset the operator
-        screen.textContent = operand;
+        screen.textContent = operand.toFixed(2);
         operand = 0;
         operator = null;
         equalJustClicked = true;
+    }
+
+    // If we select the . button
+    else if (keyPressed === ".") {
+        // Get the text on the screen
+        const screenText = screen.textContent;
+
+        // Check if theres a number on the screen
+        if (isNaN(screenText) || screenText.includes(".")) return
+
+        // Add the . to the number
+        screen.textContent += ".";
     }
 });
 
