@@ -9,6 +9,7 @@ const operatorKeys = document.querySelector("#keypad #operators");
 let state = "off";
 let operand = 0;
 let operator = null;
+let equalJustClicked = false;
 disableButtons();
 
 
@@ -48,9 +49,10 @@ numberKeys.addEventListener("click", (e) => {
         // Get the text on the screen
         const screenText = screen.textContent;
 
-        // Add the selected number to the screen
-        if (screenText.length === 1 && screenText === "0") {
+        // Else add the selected number to the screen
+        if (screenText === "0" || equalJustClicked) {
             screen.textContent = keyPressed;
+            equalJustClicked = false;
         } else if (!isNaN(screenText)) {
             screen.textContent += keyPressed;
         } else {
@@ -60,9 +62,21 @@ numberKeys.addEventListener("click", (e) => {
 
     // If we select the = button
     else if (keyPressed === "=") {
-        operand = evaluateExpression();
-        operator = null;
+        // If there are no operators setted yet and the operand is on the screen
+        if (operator === null) {
+            operand = +screen.textContent;
+        }
+        
+        // If there is a number on the screen evaluate the expression
+        else if (!isNaN(screen.textContent)) {
+            operand = evaluateExpression();
+        }
+
+        // Show the operand on the screen and reset the operator
         screen.textContent = operand;
+        operand = 0;
+        operator = null;
+        equalJustClicked = true;
     }
 });
 
@@ -75,14 +89,14 @@ operatorKeys.addEventListener("click", (e) => {
     // Get the screen text
     const screenText = screen.textContent;
 
-    // Save the current operand and the selected operator
+    // If theres a number on the screen, save the operand
     if (!isNaN(screenText)) {
         operand = (operator !== null ? evaluateExpression() : +screenText);
-        operator = keyPressed;
     }
 
-    // Show the selected operation on the screen
-    screen.textContent = keyPressed;
+    // Save an show the selected operator
+    operator = keyPressed;
+    screen.textContent = operator;
 });
 
 
