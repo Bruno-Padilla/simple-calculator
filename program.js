@@ -7,7 +7,9 @@ const operatorKeys = document.querySelector("#keypad #operators");
 
 /* - - - INIT - - - */
 let state = "off";
-// disableButtons();
+let operand = 0;
+let operator = null;
+disableButtons();
 
 
 /* - - - LISTENERS - - - */
@@ -42,26 +44,50 @@ numberKeys.addEventListener("click", (e) => {
     const keyPressed = e.target.id;
     
     // If we select a numeric button
-    if (keyPressed >= "0" && keyPressed <= "9") {
+    if (!isNaN(keyPressed)) {
         // Get the text on the screen
         const screenText = screen.textContent;
 
         // Add the selected number to the screen
         if (screenText.length === 1 && screenText === "0") {
             screen.textContent = keyPressed;
-        } else {
+        } else if (!isNaN(screenText)) {
             screen.textContent += keyPressed;
+        } else {
+            screen.textContent = keyPressed;
         }
+    }
+
+    // If we select the = button
+    else if (keyPressed === "=") {
+        operand = evaluateExpression();
+        operator = null;
+        screen.textContent = operand;
     }
 });
 
 // Listener for the operator keys
 operatorKeys.addEventListener("click", (e) => {
-    alert(e.target.id);
+    // Get the pressed key
+    const keyPressed = e.target.id;
+    if (keyPressed === "operators") return
+
+    // Get the screen text
+    const screenText = screen.textContent;
+
+    // Save the current operand and the selected operator
+    if (!isNaN(screenText)) {
+        operand = (operator !== null ? evaluateExpression() : +screenText);
+        operator = keyPressed;
+    }
+
+    // Show the selected operation on the screen
+    screen.textContent = keyPressed;
 });
 
 
 /* - - - FUNCTIONS - - - */
+
 // Function to change between states (on - off)
 function changeState() {
     // Turn on the calculator if it was turned off
@@ -105,6 +131,10 @@ function disableButtons() {
 function clear() {
     // Clear the screen (shows a "0")
     screen.textContent = "0";
+
+    // Clear the calculator memory
+    operand = 0;
+    operator = null;
 }
 
 // Function to delete the last character on the screen
@@ -117,4 +147,30 @@ function deleteLastCharacter() {
 
     // Shows 0 if the deleted character was the only one on the screen
     if (screen.textContent.length === 0) screen.textContent = "0";
+
+}
+
+// Function to evalate an expression
+function evaluateExpression() {
+    switch (operator) {
+        case "+":
+            return operand + +screen.textContent;
+            break;
+        
+        case "-":
+            return operand - screen.textContent;
+            break;
+        
+        case "*":
+            return operand * screen.textContent;
+            break;
+        
+        case "/":
+            return operand / screen.textContent;
+            break;
+        
+        case "%":
+            return operand % screen.textContent;
+            break;
+    }
 }
