@@ -17,98 +17,38 @@ disableButtons();
 
 // Listener for the special keys
 specialKeys.addEventListener("click", (e) => {
-    // Get the key pressed
-    const keyPressed = e.target.id;
-
-    // Do something according to the pressed key
-    switch (keyPressed) {
-        // Change the calculator state (on / off)
-        case "on-off":
-            changeState();
-            break;
-
-        // Delete the last character on the calculator screen
-        case "delete":
-            deleteLastCharacter();
-            break;
-        
-        // Clear the screen and memory from the calculator
-        case "clear":
-            clear();
-            break;
-    }
+    specialKeysKeypadAction(e.target.id);
 });
 
 // Listener for the number keys
 numberKeys.addEventListener("click", (e) => {
-    // Get the pressed key
-    const keyPressed = e.target.id;
-    
-    // If we select a numeric button
-    if (!isNaN(keyPressed)) {
-        // Get the text on the screen
-        const screenText = screen.textContent;
-
-        // Else add the selected number to the screen
-        if (screenText === "0" || equalJustClicked) {
-            screen.textContent = keyPressed;
-            equalJustClicked = false;
-        } else if (!isNaN(screenText)) {
-            screen.textContent += keyPressed;
-        } else {
-            screen.textContent = keyPressed;
-        }
-    }
-
-    // If we select the = button
-    else if (keyPressed === "=") {
-        // If there are no operators setted yet and the operand is on the screen
-        if (operator === null) {
-            operand = +screen.textContent;
-        }
-        
-        // If there is a number on the screen evaluate the expression
-        else if (!isNaN(screen.textContent)) {
-            operand = evaluateExpression();
-        }
-
-        // Show the operand on the screen and reset the operator
-        screen.textContent = operand.toFixed(2);
-        operand = 0;
-        operator = null;
-        equalJustClicked = true;
-    }
-
-    // If we select the . button
-    else if (keyPressed === ".") {
-        // Get the text on the screen
-        const screenText = screen.textContent;
-
-        // Check if theres a number on the screen
-        if (isNaN(screenText) || screenText.includes(".")) return
-
-        // Add the . to the number
-        screen.textContent += ".";
-    }
+    numbersKeypadAction(e.target.id);
 });
 
 // Listener for the operator keys
 operatorKeys.addEventListener("click", (e) => {
-    // Get the pressed key
-    const keyPressed = e.target.id;
-    if (keyPressed === "operators") return
+    operatorsKeypadAction(e.target.id);
+});
 
-    // Get the screen text
-    const screenText = screen.textContent;
+// Listener for the computer physical keyboard
+window.addEventListener("keydown", (e) => {
+    // Get the key pressed
+    const keyPressed = e.key;
 
-    // If theres a number on the screen, save the operand
-    if (!isNaN(screenText)) {
-        operand = (operator !== null ? evaluateExpression() : +screenText);
-    }
+    // Return if presses tab
+    if (keyPressed === "Tab") e.preventDefault();
 
-    // Save an show the selected operator
-    operator = keyPressed;
-    screen.textContent = operator;
+    // Special keys actions
+    if (keyPressed === "Delete") clear(); // "Supr" for clear the screen and memory
+    else if (keyPressed === "Escape") changeState(); // "Esc" for on/off
+    else if (keyPressed === "Backspace") specialKeysKeypadAction("delete"); // Backspace for delete
+
+    // Numeric keys actions
+    else if ((keyPressed >= "0" && keyPressed <= "9") || (keyPressed == ".")) numbersKeypadAction(keyPressed); // Numeric keypad
+    else if (keyPressed == "Enter" || keyPressed == "=") numbersKeypadAction("="); // Enter for =
+    
+    // Operator keys actions
+    else if (keyPressed == "+" || keyPressed == "-" || keyPressed == "*" || keyPressed == "/" || keyPressed == "%") operatorsKeypadAction(keyPressed);
 });
 
 
@@ -199,4 +139,92 @@ function evaluateExpression() {
             return operand % screen.textContent;
             break;
     }
+}
+
+// Function to do something when pressing a key on the numbers keypad
+function numbersKeypadAction(keyPressed) {
+    // If we select a numeric button
+    if (!isNaN(keyPressed)) {
+        // Get the text on the screen
+        const screenText = screen.textContent;
+
+        // Else add the selected number to the screen
+        if (screenText === "0" || equalJustClicked) {
+            screen.textContent = keyPressed;
+            equalJustClicked = false;
+        } else if (!isNaN(screenText)) {
+            screen.textContent += keyPressed;
+        } else {
+            screen.textContent = keyPressed;
+        }
+    }
+
+    // If we select the = button
+    else if (keyPressed === "=") {
+        // If there are no operators setted yet and the operand is on the screen
+        if (operator === null) {
+            operand = +screen.textContent;
+        }
+        
+        // If there is a number on the screen evaluate the expression
+        else if (!isNaN(screen.textContent)) {
+            operand = evaluateExpression();
+        }
+
+        // Show the operand on the screen and reset the operator
+        screen.textContent = operand.toFixed(2);
+        operand = 0;
+        operator = null;
+        equalJustClicked = true;
+    }
+
+    // If we select the . button
+    else if (keyPressed === ".") {
+        // Get the text on the screen
+        const screenText = screen.textContent;
+
+        // Check if theres a number on the screen
+        if (isNaN(screenText) || screenText.includes(".")) return
+
+        // Add the . to the number
+        screen.textContent += ".";
+    }
+}
+
+// Function to do something when pressing a key on the special keys keypad
+function specialKeysKeypadAction(keyPressed) {
+    // Do something according to the pressed key
+    switch (keyPressed) {
+        // Change the calculator state (on / off)
+        case "on-off":
+            changeState();
+            break;
+
+        // Delete the last character on the calculator screen
+        case "delete":
+            deleteLastCharacter();
+            break;
+        
+        // Clear the screen and memory from the calculator
+        case "clear":
+            clear();
+            break;
+    }
+}
+
+// Function to do something when pressing a key on the operators keypad
+function operatorsKeypadAction(keyPressed) {
+    if (keyPressed === "operators") return
+
+    // Get the screen text
+    const screenText = screen.textContent;
+
+    // If theres a number on the screen, save the operand
+    if (!isNaN(screenText)) {
+        operand = (operator !== null ? evaluateExpression() : +screenText);
+    }
+
+    // Save an show the selected operator
+    operator = keyPressed;
+    screen.textContent = operator;
 }
