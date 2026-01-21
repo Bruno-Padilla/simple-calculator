@@ -38,9 +38,12 @@ window.addEventListener("keydown", (e) => {
     // Return if presses tab
     if (keyPressed === "Tab") e.preventDefault();
 
+    // Return if the calculator is turned off
+    if (keyPressed === "Escape") changeState(); // "Esc" for on/off
+    if (state === "off") return;
+
     // Special keys actions
     if (keyPressed === "Delete") clear(); // "Supr" for clear the screen and memory
-    else if (keyPressed === "Escape") changeState(); // "Esc" for on/off
     else if (keyPressed === "Backspace") specialKeysKeypadAction("delete"); // Backspace for delete
 
     // Numeric keys actions
