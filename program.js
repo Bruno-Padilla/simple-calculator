@@ -21,9 +21,11 @@ specialKeys.addEventListener("click", (e) => {
             break;
 
         case "delete":
+            deleteLastCharacter();
             break;
         
         case "clear":
+            clear();
             break;
     }
 });
@@ -68,5 +70,23 @@ function disableButtons() {
     const DOMbuttons = document.querySelectorAll("button");
     for (let btn of DOMbuttons) {
         if (btn.id != "on-off") btn.disabled = true;
+    }
+}
+
+// Function to clear the screen and reset the operantor and operand values
+function clear() {
+    screen.textContent = "0";
+}
+
+// Function to delete the last character on the screen
+function deleteLastCharacter() {
+    const screenText = screen.textContent;
+
+    if (screenText.length > 1) {
+        screen.textContent = screenText.slice(0, screenText.length-1);
+    }
+
+    else {
+        screen.textContent = "0";
     }
 }
