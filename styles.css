@@ -77,6 +77,7 @@ body {
     font-weight: bold;
     font-size: 50px;
     background-color: #E49BA6;
+    border: none;
 }
 
 #keypad #operators {
@@ -99,6 +100,7 @@ body {
     font-weight: bold;
     font-size: 40px;
     background-color: #E49BA6;
+    border: none;
 }
 
 #keypad #special-keys {
@@ -116,4 +118,5 @@ body {
     font-weight: bold;
     font-size: 25px;
     background-color: #E49BA6;
+    border: none;
 }
